@@ -42,7 +42,7 @@ class Kernel extends HttpKernel
 
         'api' => [
             // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
- 'throttle:1000,1',
+            'throttle:1000,1',
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \Fruitcake\Cors\HandleCors::class,
@@ -57,9 +57,9 @@ class Kernel extends HttpKernel
      * @var array<string, class-string|string>
      */
     protected $routeMiddleware = [
-        'jwt.verify' => \App\Http\Middleware\JwtMiddleware::class,
-        'jwt.auth' => 'Tymon\JWTAuth\Middleware\GetUserFromToken',
-        'jwt.refresh' => 'Tymon\JWTAuth\Middleware\RefreshToken',
+        // 'jwt.verify' => \App\Http\Middleware\JwtMiddleware::class,
+        // 'jwt.auth' => 'Tymon\JWTAuth\Middleware\GetUserFromToken',
+        // 'jwt.refresh' => 'Tymon\JWTAuth\Middleware\RefreshToken',
         'auth' => \App\Http\Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
@@ -70,10 +70,14 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'updatedversion' => \App\Http\Middleware\Updatedversion::class,
-        'jwt-auth' => \App\Http\Middleware\authJWT::class,
+        // 'jwt-auth' => \App\Http\Middleware\authJWT::class,
         'api.auth'=>\App\Http\Middleware\ApiCustomerAuthenticate::class,
         'admin' => \App\Http\Middleware\IsAdmin::class,
         'xcsrf' => \App\Http\Middleware\XcsrfToken::class,
+        
+        'jwt.verify' => \App\Http\Middleware\JwtMiddleware::class,
+        'jwt.auth' => 'Tymon\JWTAuth\Middleware\GetUserFromToken',
+        'jwt.refresh' => 'Tymon\JWTAuth\Middleware\RefreshToken',
     ];
 }
 

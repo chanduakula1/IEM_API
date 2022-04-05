@@ -58,9 +58,11 @@ class ApiCustomerAuthenticate
      */
     public function handle($request, Closure $next)
     {
-        $deviceId = $request->header('X-DEVICE-ID');
-        $token = $request->header('authorization');
-        $accessToken = ($token != '') ? str_replace('Bearer ', '', $token) : '';
+        // dd($request);
+        // $deviceId = $request->header('X-DEVICE-ID');
+        // $token = $request->header('authorization');
+        // $accessToken = ($token != '') ? str_replace('Bearer ', '', $token) : '';
+        // dd($accessToken);
         $this->access_token = $accessToken;
         $this->mobile_id = $deviceId;
 

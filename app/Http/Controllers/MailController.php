@@ -27,11 +27,13 @@ class MailController extends Controller
             'name' => "Virat Gandhi",
             'otp' => $OTP
         );
+
         // return $send_mail;
-        Mail::send(['text' => 'mail'], $data, function ($message) use ($email)
+        Mail::send(['html' => 'mail'], $data, function ($message) use ($email)
         {
-            $message->to($email, 'Tutorials Point')->subject('Laravel Basic Testing Mail');
-            $message->from('xyz@gmail.com', 'Virat Gandhi');
+            $message->to(filter_var($email, FILTER_VALIDATE_EMAIL))->subject('Laravel Basic Testing Mail');
+            $message->from('xyz@gmail.com', 'Naarsoft');
+            // return $this->markdown('mail');
         });
         return response()->json([
             'statusCode' => '200', 
@@ -157,11 +159,26 @@ class MailController extends Controller
         $email = $Request->get('email');
         $NewPassword = $Request->get('password');
         $ConfirmPassword = $Request->get('confirm_password');
-        \DB::table('employees')
+        $UpdatePassword = \DB::table('employees')
             ->where('email', $email)->update([
         // $Employee = Employee::where('slug', $slug)->first();
         'password' => Hash::make($Request->get('password')) , ]);
-        return "sucess";
+        if($UpdatePassword == 1)
+        {
+            return response()->json([
+                'statusCode' => '200', 
+                'status' => 'Sucess', 
+                'message' => "Password Updated Sucessfully" 
+            ]);
+        }
+        if($UpdatePassword == 0)
+        {
+            return response()->json([
+                'statusCode' => '400', 
+                'status' => 'Failed', 
+                'message' => "Some Error Occured" 
+            ]);
+        }
 
     }
     public function KnownPasswordChange(Request $Request)
@@ -221,14 +238,12 @@ class MailController extends Controller
 
     public function CheckMail($email)
     {
-        $Identifty_mail = \DB::table('employees')->where('email', $email)->select('email', 'password')
-            ->first();
+        $Identifty_mail = \DB::table('employees')->where('email', $email)->select('email', 'password')->first();
         return $Identifty_mail;
     }
     public function CheckOldPassword($old_password, $email)
     {
-        $CheckOldPassword = \DB::table('employees')->where('email', $email)->select('password')
-            ->first();
+        $CheckOldPassword = \DB::table('employees')->where('email', $email)->select('password')->first();
         return $CheckOldPassword;
     }
 }

@@ -67,7 +67,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'Asia/Kolkata',
 
     /*
     |--------------------------------------------------------------------------
@@ -139,7 +139,9 @@ return [
         /*
          * Laravel Framework Service Providers...
          */
-         Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
+        // Tymon\JWTAuth\Providers\LaravelServiceProvider::class
+        Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
+         // Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
          // Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
         Illuminate\Auth\AuthServiceProvider::class,
         Illuminate\Broadcasting\BroadcastServiceProvider::class,
@@ -176,7 +178,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        'Tymon\JWTAuth\Providers\LaravelServiceProvider',
+        Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
 
 
     ],
@@ -193,8 +195,10 @@ return [
     */
 
     'aliases' => [
-        'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,
-        'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class,
+        // 'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class, 
+        // 'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class,
+        // 'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,
+        // 'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class,
         // 'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,
         // 'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class,
         'App' => Illuminate\Support\Facades\App::class,
@@ -236,6 +240,8 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
+        'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,
+        'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class
 
     ],
 

@@ -6,12 +6,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Employee;
 use App\Models\BankDetail;
-use Tymon\JWTAuth\Exceptions\JWTException;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Models\Childrendetails;
 use Exception;
+use JWTAuth;
+use Tymon\JWTAuth\Exceptions\JWTException;
+
 
 class EmployeeController extends Controller
 {
@@ -123,11 +125,12 @@ class EmployeeController extends Controller
                 $Child->ContactNumber = $Request->get('ContactNumber');
                 $Child->IsActive = 1;
                 $Child->save();
-
+                $user = JWTAuth::user();
                  return response()->json([
                     'statusCode'=> '200', 
                     'status'   => 'Sucess', 
-                    'message'    => 'Employee Created Sucessfully'
+                    'message'    => 'Employee Created Sucessfully',
+                    'User' => $user
         ]);
             }
         // } catch(Exception $ex) {
@@ -135,36 +138,135 @@ class EmployeeController extends Controller
         // }
        
     }
-    /*
 
-
-
-
-    */
-    public function Emoloyeelogin(Request $Request)
+    public function login(Request $request)
     {
-        return "employee login sucess";    
+        // dd('sdasdasd');
+        $credentials = $request->only('email', 'password');
+
+        //valid credential
+        $validator = Validator::make($credentials, [
+            'email' => 'required|email',
+            // 'password' => 'required|string|min:6|max:50'
+            'password' => 'required|string'
+
+        ]);
+
+        //Send failed response if request is not valid
+        if ($validator->fails())
+        {
+            return response()->json(['error' => $validator->messages()], 200);
+        }
+
+        //Request is validated
+        //Crean token
+        try
+        {
+            if (! $token = JWTAuth::attempt($credentials))
+            {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Login credentials are invalid.',
+                ], 400);
+            }
+        }
+        catch (JWTException $e)
+        {
+            return $credentials;
+            return response()->json([
+                    'success' => false,
+                    'message' => 'Could not create token.',
+                ], 500);
+        }
+
+        $user = JWTAuth::user();
+    
+        //Token created, return with success response and jwt token
+        // dd($token);
+        return response()->json([
+            'success' => true,
+            'token' => $token,
+            'user_details' => $user
+        ]);
     }
+    public function logout(Request $request)
+    {
+        //valid credential
+        // $validator = Validator::make($request->only('token'), [
+        //     'token' => 'required'
+        // ]);
+
+        //Send failed response if request is not valid
+        // if ($validator->fails()) {
+        //     return response()->json(['error' => $validator->messages()], 200);
+        // }
+
+        //Request is validated, do logout        
+        try {
+            JWTAuth::invalidate($request->token);
+ 
+            return response()->json([
+                'success' => true,
+                'message' => 'User has been logged out'
+            ]);
+        } catch (JWTException $exception) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sorry, user cannot be logged out'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function getEmployeesList(Request $request)
+    {
+        // dd('szdfsdfdfs');
+        //return response()->json(["Employee" => Employee::all(), "AuthData" => JWTAuth::authenticate($request->token)]);
+        return $user = JWTAuth::user();
+    }
+
+
+
     public function EmployeeEdit(Request $Request, $slug) // sending employee detials to UI based on slug
     {
-        // return $token;
         try{
-        return response()->json([
-         \DB::table('employees')->where('slug', $slug)->first() 
-     ]);
-    }catch(Exception $ex) {
+            $EmployeeId = JWTAuth::user()->EmployeeId;
+            $EmployeeData = \DB::table('employees')->where('EmployeeId', $EmployeeId)->first();
+            if($EmployeeData == null)
+            {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'employee not found',
+                ]);
+            }else{
+                return response()->json([
+                    'success' => true,
+                    'message' => 'employee found',
+                    'data' => $EmployeeData,
+                ]);
+            }
+        }catch(Exception $ex){
             return $this->getErrorJsonResponse([], $ex->getMessage(), $ex->getCode());
         }
     }
     public function EmployeeDelete(Request $Request, $slug)
     {
-        try{
-        \DB::table('employees')->where('slug', $slug)->update(['IsActive' => 0]);
-         return response()->json([
-                    'statusCode'=> '204', 
-                    'status'   => 'Sucess', 
-                    'message'    => 'Employee Inactivated Sucessfully'
-        ]);
+        try{ 
+            $Delete = \DB::table('employees')->where('slug', $slug)->update(['IsActive' => 0]);
+            if($Delete == 1)
+            {
+                return response()->json([
+                        'statusCode'=> '204', 
+                        'status'   => 'Sucess', 
+                        'message'    => 'Employee Inactivated Sucessfully'
+                         ]);
+            }
+            if($Delete == 0){
+                return response()->json([
+                        'statusCode'=> '400', 
+                        'status'   => 'Failed', 
+                        'message'    => 'Employee Not found'
+                        ]);
+            }
      }catch(Exception $ex){
             return $this->getErrorJsonResponse([], $ex->getMessage(), $ex->getCode());
         }
@@ -253,16 +355,25 @@ class EmployeeController extends Controller
     }
     public function ActiveEmployeeListing() // Listing active employees
     {
-        try{
-            return \DB::table('employees')->where('IsActive', '=', 1)->get();
-         }catch(Exception $ex) {
-            return $this->getErrorJsonResponse([], $ex->getMessage(), $ex->getCode());
-        }
+    
+            // dd('sdgdfgg');
+            $EmployeesData = \DB::table('employees')->where('IsActive', '=', 1)->get();
+            return response()->json([
+                'success' => true,
+                'message' => "List Of Employees",
+                'data' => $EmployeesData
+            ]);
+        
     }
     public function InactiveEmployeeLisiting()  //Listing Inactive Employees
     {
         try{
-            return \DB::table('employees')->where('IsActive', "!=", 1)->orWhere('IsActive', "=", null)->get();
+            $InactiveEmployeeList = \DB::table('employees')->where('IsActive', "!=", 1)->orWhere('IsActive', "=", null)->get();
+            return response()->json([
+                'success' => true,
+                'message' => "Inactivated Employees",
+                'data' => $InactiveEmployeeList,
+            ]);
         }catch(Exception $ex) {
             return $this->getErrorJsonResponse([], $ex->getMessage(), $ex->getCode());
         }
@@ -272,7 +383,7 @@ class EmployeeController extends Controller
     {
         try{
             return \DB::table('employees')->where('email', $EmployeeEmail)->select('EmployeeId')->first();
-        }catch(Exception $ex) {
+        }catch(\Exception $ex) {
             return $this->getErrorJsonResponse([], $ex->getMessage(), $ex->getCode());
         }           
     }

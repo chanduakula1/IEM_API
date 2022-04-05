@@ -7,6 +7,9 @@ use App\Models\Childrendetails;
 use Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
+use JWTAuth;
+use Tymon\JWTAuth\Exceptions\JWTException;
+
 
 class ChildDetails extends Controller
 {
@@ -35,7 +38,7 @@ class ChildDetails extends Controller
                     ]);
             }
             $Child = new Childrendetails;
-            $Child->EmployeeId = 1;
+            $Child->EmployeeId = JWTAuth::user()->EmployeeId;
             $Child->ChildName = $Request->get('ChildName');
             $Child->DOB = $Request->get('DOB');
             $Child->Gender = $Request->get('Gender');
@@ -64,8 +67,20 @@ class ChildDetails extends Controller
     {
         try
         {
-            $childdata = \DB::table('childrendetails')->where('slug', $value)->first();
-            return $childdata;
+            $ChildData = \DB::table('childrendetails')->where('slug', $value)->first();
+            if($ChildData == null)
+            {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Child Not Found',
+                    'data' => null
+                ]);
+            }
+            return response()->json([
+                'success' => true,
+                'message' => 'Child Detials',
+                'data' => $ChildData
+            ]);
         }
         catch(Exception $ex)
         {
@@ -77,7 +92,7 @@ class ChildDetails extends Controller
     {
         try
         {
-            \DB::table('childrendetails')->where('slug', $value)->update([
+            $UpdateChild = \DB::table('childrendetails')->where('slug', $value)->update([
             // $Child->EmployeeId =  1;
             'ChildName' => $Request->get('ChildName') , 
             'DOB' => $Request->get('DOB') , 
@@ -89,10 +104,19 @@ class ChildDetails extends Controller
             'ContactNumber' => $Request->get('ContactNumber')
             // $Child->IsActive  = 1;
             ]);
-            return response()
-                ->json(['statusCode' => '200', 
-                    'status' => 'Sucess', 
-                    'message' => 'Child Detials Updated sucessfully'
+            // dd($UpdateChild);
+            if($UpdateChild == 0)
+            {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Child Detials Not Updated',
+                    // 'data'
+                ]);
+            }
+            return response()->json([
+                    'sucess' => true, 
+                    'message' => 'Child Detials Updated', 
+                    // 'message' => 'Child Detials Updated sucessfully'
                 ]);
         }
         catch(Exception $ex)
@@ -109,12 +133,18 @@ class ChildDetails extends Controller
             $childdata = \DB::table('childrendetails')->where('slug', $value)->update([
                 'IsActive' => 0, 
             ]);
-            return response()
-                ->json([
-                    'statusCode' => '200', 
-                    'status' => 'Sucess', 
-                    'message' => 'Child Detials inactivated sucessfully'
+            if($childdata == 1)
+            {
+                return response()->json([
+                    'success' => true,
+                    'message' => "Child inactivated sucessfully",
                 ]);
+            }else{
+                return response()->json([
+                    'success' => false,
+                    'message' => "Child Detials already Inactived",
+                ]);
+            }
         }
         catch(Exception $ex)
         {
@@ -135,7 +165,12 @@ class ChildDetails extends Controller
     public function ChildList() // listing childs
     {
         try{
-            return \DB::table('childrendetails')->where('IsActive', '=', 1)->get();
+            $ChildDetails = \DB::table('childrendetails')->where('IsActive', '=', 1)->get();
+            return response()->json([
+                'success' => true,
+                'message' => 'Child Detials',
+                'data' => $ChildDetails, 400
+            ]);
         }catch(Exception $ex){
             return $this->getErrorJsonResponse([], $ex->getMessage() , $ex->getCode());
         }
@@ -144,7 +179,12 @@ class ChildDetails extends Controller
     public function InactiveChildList() //inactive child detials
     {
         try{
-            return \DB::table('childrendetails')->where('IsActive', '!=', 1)->get();
+            $InactiveChildList = \DB::table('childrendetails')->where('IsActive', '!=', 1)->get();
+            return response()->json([
+                'success' => true,
+                'message' => 'Inactive Child List',
+                'data' => $InactiveChildList,
+            ]);
         }catch(Exception $ex){
             return $this->getErrorJsonResponse([], $ex->getMessage() , $ex->getCode());
         }

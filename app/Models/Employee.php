@@ -20,6 +20,10 @@ class Employee extends Authenticatable implements JWTSubject
      *
      * @var array<int, string>
      */
+
+
+    protected $primaryKey = "EmployeeId";
+
     protected $fillable = [
         'name',
         'email',
@@ -44,9 +48,17 @@ class Employee extends Authenticatable implements JWTSubject
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-      public function getJWTIdentifier() {
+    
+    // public function getJWTIdentifier() {
+    //     return $this->getKey();
+    // }
+
+    public function getJWTIdentifier()
+    {
         return $this->getKey();
     }
+
+
     /**
      * Return a key value array, containing any custom claims to be added to the JWT.
      *
