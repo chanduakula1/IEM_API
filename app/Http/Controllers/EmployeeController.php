@@ -180,13 +180,15 @@ class EmployeeController extends Controller
         }
 
         $user = JWTAuth::user();
+        $role = Employee::select('roles.RoleName', 'roles.RoleId', 'employeeroles.EmployeeId')->join('employeeroles', 'employeeroles.EmployeeId', 'employees.EmployeeId' )->join('roles','employeeroles.RoleId', 'roles.RoleId')->where('employees.EmployeeId', $user->EmployeeId)->get();
     
         //Token created, return with success response and jwt token
         // dd($token);
         return response()->json([
             'success' => true,
             'token' => $token,
-            'user_details' => $user
+            'user_details' => $user,
+            'role' => $role,
         ]);
     }
     public function logout(Request $request)
