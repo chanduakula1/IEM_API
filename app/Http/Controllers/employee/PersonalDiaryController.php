@@ -15,6 +15,7 @@ class PersonalDiaryController extends Controller
          $validator = Validator::make($Request->all(),[
             'heading' =>'required',
             'message' => 'required',
+            'date' => 'required',
         ]);
         if($validator->fails())
         {
@@ -28,6 +29,7 @@ class PersonalDiaryController extends Controller
         $Dairy->user_id = JWTAuth::user()->EmployeeId;
         $Dairy->heading = $Request->heading;
         $Dairy->message = $Request->message;
+        $Dairy->date = $Request->date;
         $Dairy->is_active = 1;
         $Dairy->save();
         return response()->json([

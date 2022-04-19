@@ -13,6 +13,9 @@ use App\Models\Childrendetails;
 use Exception;
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use Illuminate\Validation\Rule;
+
+
 
 
 class EmployeeController extends Controller
@@ -20,10 +23,14 @@ class EmployeeController extends Controller
     public function EmployeeRegister(Request $Request) // new Employee Regestration
     {
          // try {
+        // dd($Request->email);
             $validator = Validator::make($Request->all(), [
                 'Title' => 'required',
                 'FirstName' => 'required|regex:/^[\pL\s\-]+$/u',
                 'LastName' => 'required|alpha',
+                'email' => ['required' ,Rule::unique('employees')->where(function ($query) use ($Request) {
+    return $query->where('email_verified_at', 1);
+})],
                 // 'EmailOfficial' => 'required|email|unique:employees',
                 // 'EmailPersonal' => 'required|email|unique:employees',
                 'password' => 'required',
@@ -151,7 +158,6 @@ class EmployeeController extends Controller
             'password' => 'required|string'
 
         ]);
-
         //Send failed response if request is not valid
         if ($validator->fails())
         {
@@ -388,5 +394,9 @@ class EmployeeController extends Controller
         }catch(\Exception $ex) {
             return $this->getErrorJsonResponse([], $ex->getMessage(), $ex->getCode());
         }           
+    }
+    public function emailverify($email)
+    {
+        return \DB::table('employees')->where('email', $email)->where('email_verified_at', 1)->get();
     }
 }
