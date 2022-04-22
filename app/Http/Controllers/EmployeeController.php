@@ -16,7 +16,12 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 use Illuminate\Validation\Rule;
 
 
-
+/**
+ * @OA\Info(
+ *    title="Your super  ApplicationAPI",
+ *    version="1.0.0",
+ * )
+ */
 
 class EmployeeController extends Controller
 {
@@ -28,9 +33,7 @@ class EmployeeController extends Controller
                 'Title' => 'required',
                 'FirstName' => 'required|regex:/^[\pL\s\-]+$/u',
                 'LastName' => 'required|alpha',
-                'email' => ['required' ,Rule::unique('employees')->where(function ($query) use ($Request) {
-    return $query->where('email_verified_at', 1);
-})],
+                'email' => 'required|email',
                 // 'EmailOfficial' => 'required|email|unique:employees',
                 // 'EmailPersonal' => 'required|email|unique:employees',
                 'password' => 'required',
@@ -146,6 +149,7 @@ class EmployeeController extends Controller
        
     }
 
+
     public function login(Request $request)
     {
         // dd('sdasdasd');
@@ -234,7 +238,7 @@ class EmployeeController extends Controller
 
 
 
-    public function EmployeeEdit(Request $Request, $slug) // sending employee detials to UI based on slug
+    public function EmployeeEdit(Request $Request) // sending employee detials to UI based on slug
     {
         try{
             $EmployeeId = JWTAuth::user()->EmployeeId;
@@ -252,7 +256,7 @@ class EmployeeController extends Controller
                     'data' => $EmployeeData,
                 ]);
             }
-        }catch(Exception $ex){
+        }catch(\Exception $ex){
             return $this->getErrorJsonResponse([], $ex->getMessage(), $ex->getCode());
         }
     }

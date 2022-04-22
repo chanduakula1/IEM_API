@@ -171,8 +171,8 @@ class ChildDetails extends Controller
                 'message' => 'Child Detials',
                 'data' => $ChildDetails, 400
             ]);
-        }catch(Exception $ex){
-            return $this->getErrorJsonResponse([], $ex->getMessage() , $ex->getCode());
+        }catch(\Exception $ex){
+            return $ex;
         }
         
     }

@@ -142,6 +142,7 @@ class LeaveManagementController extends Controller
     }
     public function IndividualEmployeeLeaves()
     {
+        // dd('dsfdsfdfs');
         $EmployeeId = JWTAuth::user()->EmployeeId;
         $LeaveData = \DB::table('leavemanagement')->where('EmployeeId', $EmployeeId)->get();
         // $LeaveData = 0;
