@@ -14,6 +14,7 @@ use Exception;
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Illuminate\Validation\Rule;
+use App\Models\employeerole;
 
 
 /**
@@ -28,12 +29,14 @@ class EmployeeController extends Controller
     public function EmployeeRegister(Request $Request) // new Employee Regestration
     {
          // try {
+        // dd('dsfgdfg');
         // dd($Request->email);
             $validator = Validator::make($Request->all(), [
                 'Title' => 'required',
                 'FirstName' => 'required|regex:/^[\pL\s\-]+$/u',
                 'LastName' => 'required|alpha',
-                'email' => 'required|email',
+                'email' => 'required|email|unique:employees',
+                'Role' => 'required',
                 // 'EmailOfficial' => 'required|email|unique:employees',
                 // 'EmailPersonal' => 'required|email|unique:employees',
                 'password' => 'required',
@@ -115,6 +118,11 @@ class EmployeeController extends Controller
                 $Employee->save();
                 $EmployeeId = $this->get_employee_id($EmployeeEmail);
                 // return $EmployeeId;
+                $Role = new employeerole;
+                $Role->EmployeeId = $EmployeeId->EmployeeId; 
+                $Role->RoleId  = $Request->get('Role');
+                $Role->IsActive  = 1;
+                $Role->save();
                 $BankDetials = new Bankdetail;
                 $BankDetials->EmployeeId = $EmployeeId->EmployeeId; 
                 $BankDetials->BankName = $Request->get('BankName');
@@ -188,7 +196,6 @@ class EmployeeController extends Controller
                     'message' => 'Could not create token.',
                 ], 500);
         }
-
         $user = JWTAuth::user();
         $role = Employee::select('roles.RoleName', 'roles.RoleId', 'employeeroles.EmployeeId')->join('employeeroles', 'employeeroles.EmployeeId', 'employees.EmployeeId' )->join('roles','employeeroles.RoleId', 'roles.RoleId')->where('employees.EmployeeId', $user->EmployeeId)->get();
     

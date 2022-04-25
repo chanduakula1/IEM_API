@@ -140,6 +140,7 @@ return [
          * Laravel Framework Service Providers...
          */
         // Tymon\JWTAuth\Providers\LaravelServiceProvider::class
+        Maatwebsite\Excel\ExcelServiceProvider::class,
         Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
          // Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
          // Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
@@ -201,6 +202,7 @@ return [
         // 'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class,
         // 'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,
         // 'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class,
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
         'App' => Illuminate\Support\Facades\App::class,
         'Arr' => Illuminate\Support\Arr::class,
         'Artisan' => Illuminate\Support\Facades\Artisan::class,
