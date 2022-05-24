@@ -29,7 +29,7 @@ class BillsAndAdvancesController extends Controller
         }
         $Bill = new Billsadvance;
         $Bill->NatureOfBill = $Request->get('NatureOfBill');
-        $Bill->UserId = JWTAuth::user()->EmployeeId;
+        $Bill->EmployeeId = JWTAuth::user()->EmployeeId;
         $Bill->Upload = $Request->get('Upload');
         $Bill->ToBeSend = $Request->get('ToBeSend');
         $Bill->status = $Request->get('status');

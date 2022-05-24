@@ -92,7 +92,7 @@ class LeaveManagementController extends Controller
         // $Employeeid = $this->EmployeeId($email);
         $Employeeid = JWTAuth::user()->EmployeeId;
         $CancelLeave = \DB::table('leavemanagement')->where('EmployeeId', $Employeeid)->where('LeaveId', $LeaveId)->update([
-            'IsActive' => 0,
+            9
         ]);
         if($CancelLeave == 1)
         {

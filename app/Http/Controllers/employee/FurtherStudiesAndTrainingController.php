@@ -162,4 +162,41 @@ class FurtherStudiesAndTrainingController extends Controller
             'message' => 'Data Updated Sucessfully',
         ]);
     }
+    public function UpdateStudiesAndTrainingDelete(Request $Request)
+    {
+        $validations = Validator::make($Request->all(),[
+            // 'email' => 'required',
+            'TrainingId' => 'required',
+        ]);
+        if($validations->fails())
+        {
+             return response()->json([
+                    'statusCode'=> '400', 
+                    'status'   => 'Failed', 
+                    'message'    => $validations->errors(),
+                     ]);
+        }
+        // $email = $Request->get('email');
+        $TrainingId = $Request->get('TrainingId');
+        // dd($LeaveId);
+        // $Employeeid = $this->EmployeeId($email);
+        $Employeeid = JWTAuth::user()->EmployeeId;
+        $trainingdetails = \DB::table('trainingdetails')->where('TrainingId', $TrainingId)->update([
+            'IsActive' => 0,
+        ]);
+        if($trainingdetails == 1)
+        {
+         return response()->json([
+                    'statusCode'=> '200', 
+                    'status'   => 'Sucess', 
+                    'message'    => 'Leave Cancelled Sucessfully'
+                     ]);
+        }else{
+            return response()->json([
+                    'statusCode'=> '400', 
+                    'status'   => 'Failed', 
+                    'message'    => 'Data Not Found'
+                     ]);
+        }
+    }
 }

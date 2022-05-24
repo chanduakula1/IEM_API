@@ -60,7 +60,10 @@ class PersonalJournalController extends Controller
     }
     public function PersonalJournalsUpdate(Request $Request, $slug)
     {
-        $Personaljournal = \DB::table('personaljournals')->where('slug', $slug)->first();
+        $Personaljournal = \DB::table('personaljournals')->where('slug', $slug)->update([
+                'heading' => $Request->heading,
+                'message' => $Request->message,               
+        ]);
         if($Personaljournal == null)
         {
             return response()->json([
@@ -74,7 +77,6 @@ class PersonalJournalController extends Controller
             'statusCode' => 200,
             'status' => 'Sucess',
             'message' => 'Pesornal Journal Detials',
-            'data' => $Personaljournal,
         ]);
     }
     public function PersonalJournalsDelete(Request $Request, $slug)

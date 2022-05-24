@@ -17,7 +17,7 @@ class UsersExport implements FromCollection,WithHeadings
     {
         // return User::all();
         // dd(JWTAuth::user()->EmployeeId);
-        return \DB::table('leavemanagement')->where('EmployeeId', JWTAuth::user()->EmployeeId)->select('Reason', 'created_at', 'NoOfDays', 'Remark')->get();
+        return \DB::table('leavemanagement')->where('EmployeeId', JWTAuth::user()->EmployeeId)->get();
     }
     public function headings(): array
     {

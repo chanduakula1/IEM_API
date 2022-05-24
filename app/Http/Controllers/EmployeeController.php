@@ -131,18 +131,21 @@ class EmployeeController extends Controller
                 $BankDetials->IFSC = $Request->get('IFSC');
                 $BankDetials->IsActive = 1;
                 $BankDetials->save();
+                foreach ($Childrendetails as $child) 
+                {
                 $Child = new Childrendetails;
                 $Child->EmployeeId = $EmployeeId->EmployeeId;
-                $Child->ChildName = $Request->get('ChildName');
-                $Child->DOB = $Request->get('DOB');
-                $Child->Gender = $Request->get('Gender');
-                $Child->MaritalStatus = $Request->get('MaritalStatus');
-                $Child->PresentAddress = $Request->get('PresentAddress');
-                $Child->Email = $Request->get('Email');
+                $Child->ChildName = $child->ChildName;
+                $Child->DOB = $child->DOB;
+                $Child->Gender = $child->Gender;
+                $Child->MaritalStatus = $child->MaritalStatus;
+                $Child->PresentAddress = $child->PresentAddress;
+                $Child->Email = $child->Email;
                 $Child->slug = $Request->get('ChildName') . Str::random(30);
-                $Child->ContactNumber = $Request->get('ContactNumber');
+                $Child->ContactNumber = $child->ContactNumber;
                 $Child->IsActive = 1;
                 $Child->save();
+                }
                 $user = JWTAuth::user();
                  return response()->json([
                     'statusCode'=> '200', 
@@ -235,11 +238,10 @@ class EmployeeController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-
     public function getEmployeesList(Request $request)
     {
         // dd('szdfsdfdfs');
-        //return response()->json(["Employee" => Employee::all(), "AuthData" => JWTAuth::authenticate($request->token)]);
+        // return response()->json(["Employee" => Employee::all(), "AuthData" => JWTAuth::authenticate($request->token)]);
         return $user = JWTAuth::user();
     }
 
